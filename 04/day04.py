@@ -10,6 +10,8 @@ def get_year(): return 2023
 import numpy as np
 
 def p1(v):
+    time1 = time.perf_counter()
+
     cards = get_lines(v)
     chunks = v.split('\n\n')
 
@@ -23,6 +25,7 @@ def p1(v):
         if num_wins > 0:
             ans += 2 ** (num_wins - 1)
 
+    time2 = time.perf_counter()
     return ans
 
 def p2(v):

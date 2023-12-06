@@ -30,6 +30,7 @@ def p1(v):
             for pos in symbols[i]:
                 gears = []
                 
+                #this accounts for some corner conditions so the look_around functions properly if a symbol is located on either the first or the last line
                 start_ln = -1
                 if i == 0:
                     start_ln = 0
@@ -39,9 +40,6 @@ def p1(v):
                     end_ln = 1
                 
                 for x in range(start_ln, end_ln):
-
-                    if i == 10:
-                        print(i)
                     part_nums = look_around(lns[i + x], pos)
                 
                     for item in part_nums:
@@ -56,10 +54,10 @@ def p1(v):
     return ans
 
 def look_around(ln, pos):
-
     index = []
     for dir in [-1,1]:
         idx = dir
+        #kludgy hack so we dont look past the beginning/end of a line
         try:
             while ln[pos + idx].isdigit():
                 idx += dir
