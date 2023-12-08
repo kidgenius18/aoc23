@@ -94,7 +94,7 @@ def check_range(arr1, arr2):
         ub2 = lb2 + item2[2] - 1
 
         if lb1 < lb2 and ub1 < lb2: #both the lower and upper bound are below the first element.  this only works because we've sorted on tthe order
-            return [lb1, lb2]
+            return [lb1, ub1]
 
         if lb1 < lb2 and ub1 >= lb2: #the lower bound is below the first element, but the upper bound intersects.  this requires a split of the data
             output.append([lb1, lb2 - 1])
