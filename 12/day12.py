@@ -7,67 +7,88 @@ from utils import *
 def get_day(): return 12
 def get_year(): return 2023
 
+import re
+import functools
+
 def p1(v):
+    time1 = time.perf_counter()
     lns = get_lines(v)
     ans = 0
     for ln in lns:
-        springs, groups = ln.split()
-        #spring_counts = springs.split(',')
-        groups = groups.split(',')
+        sequence, springs = ln.split()
+        springs = springs.split(',')
+
+        spring_seq = '.'
+        for s in springs:
+            #take each spring size and turn it into a block of #'s, with a single period between them.
+            spring_seq += '#' * int(s) + '.'
         
-        spring_chars = len(springs)
-        spring_pattern = [None] * 2**spring_chars #populate with the current pattern...
+        ans += recurser(sequence, spring_seq)
         
-        pattern_counter = 0
-        for i, sp in enumerate(springs):
-            if sp == '?':
-                slice_idx = 2 ** pattern_counter
-                loc_idx = i+1
-
-                if pattern_counter == 0:
-                    spring_pattern[0:1] = [springs, springs]
-                else:                
-                    spring_pattern[slice_idx : slice_idx * 2] = spring_pattern[0 : slice_idx]
-
-                pattern_counter += 1
-                
-                for sp_idx in range(slice_idx):
-                    spp = spring_pattern[sp_idx]
-
-                    spring_pattern[sp_idx] = spp[:loc_idx].replace('?','.') + spp[loc_idx:]
-                    spring_pattern[sp_idx + slice_idx] = spp[:loc_idx].replace('?','#')+ spp[loc_idx:]
-            #ans += 1
-        
-        arrangements = 0
-        for i in range(slice_idx * 2):
-            
-            spring_pattern[i] = '.' + spring_pattern[i] + '.'
-            ßßß
-            finder = 0 
-            #debug_spring = spring_pattern[i]
-
-            for g in groups:
-                spring = '.' + '#' * int(g) + '.'
-                spring_loc = spring_pattern[i].find(spring)
-
-
-                if spring_loc > -1 and spring_pattern[i].find('#') - 1 == spring_loc:
-                    finder += 1
-                spring_pattern[i] = spring_pattern[i].replace(spring, '.', 1)
-                
-    
-            if all([x == '.' for x in spring_pattern[i]]) and finder == len(groups):
-                arrangements += 1
-
-
-        #print ('arrangements: ' + str(arrangements))
-    
-        ans += arrangements
+    time2 = time.perf_counter()
+    print('time: ' + str(time2 - time1))
     return ans
 
 def p2(v):
-    return p1(v)
+    time1 = time.perf_counter()
+    lns = get_lines(v)
+    ans = 0
+    for i, ln in enumerate(lns):
+        sequence, springs = ln.split()
+        springs = springs.split(',')
+        springs = springs * 5
 
+        sequence = ((sequence + '?') * 5)[:-1]
+
+        spring_seq = '.'
+        for s in springs:
+            #take each spring size and turn it into a block of #'s, with a single period between them.
+            spring_seq += '#' * int(s) + '.'
+
+        ans += recurser(sequence, spring_seq)
+    
+
+    time2 = time.perf_counter()
+    print('time: ' + str(time2 - time1))
+
+    return ans
+
+@functools.cache
+def recurser(pattern, spring):
+    argt = 0
+    
+    per_pattern = pattern.replace('?','.',1)
+    ht_pattern = pattern.replace('?', '#', 1)
+
+    #try replacing the ? with a '.', and then with a '#', to see if it matches our sequence
+    argt += finder(per_pattern, spring)
+    argt += finder(ht_pattern, spring)
+
+    return argt
+
+@functools.cache
+def finder(pattern, spring):
+    #add a leading/trailing '.' character so everything aligns with the input check
+    pattern = '.' + pattern + '.'
+    #replace all multiple periods with single periods.  we dont care how many periods are between each spring
+    #the set of springs at the beginning was converted to #'s with a single period between each.  
+    #this regex will replicate the input group
+    pattern = re.sub('\.+','.',pattern)
+    #find where the first '?' is located.
+    slicer = pattern.find('?')
+
+    #if the pattern of .'s and #'s up to the current ? char matches, then this is a potentially matching sequence.
+    #if we dont match up at this point, there is no point in continuing on as this wont be match.
+    #we can just return and move on to the next seq
+    if pattern[:slicer] == spring[:slicer]:
+        #if no more ? exist, then this is a full seq which matches
+        if pattern.find('?') == -1:
+            return 1
+        else:
+            #if there still exists a ?, then we continue the substitution.thi
+            return recurser(pattern, spring)
+    
+    return 0
 
 if __name__ == '__main__':
     cmds = get_commands()
@@ -81,5 +102,5 @@ if __name__ == '__main__':
         ]
     """
     print('Commands:', cmds)
-    #cmds = ['samples_only','run_samples','run1']
+    #cmds = ['samples_only','run_samples','run2']
     main(get_year(), get_day(), p1, p2, cmds, FILE=__file__)
