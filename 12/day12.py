@@ -23,6 +23,7 @@ def p1(v):
             #take each spring size and turn it into a block of #'s, with a single period between them.
             spring_seq += '#' * int(s) + '.'
         
+        sequence = '.' + sequence + '.'
         ans += recurser(sequence, spring_seq)
         
     time2 = time.perf_counter()
@@ -38,7 +39,8 @@ def p2(v):
         springs = springs.split(',')
         springs = springs * 5
 
-        sequence = ((sequence + '?') * 5)[:-1]
+        #add a leading/trailing '.' character so everything aligns with the input check
+        sequence = '.' + ((sequence + '?') * 5)[:-1] + '.'
 
         spring_seq = '.'
         for s in springs:
@@ -67,8 +69,7 @@ def recurser(pattern, spring):
     return argt
 
 def finder(pattern, spring):
-    #add a leading/trailing '.' character so everything aligns with the input check
-    pattern = '.' + pattern + '.'
+    
     #replace all multiple periods with single periods.  we dont care how many periods are between each spring
     #the set of springs at the beginning was converted to #'s with a single period between each.  
     #this regex will replicate the input group
