@@ -66,7 +66,6 @@ def recurser(pattern, spring):
 
     return argt
 
-@functools.cache
 def finder(pattern, spring):
     #add a leading/trailing '.' character so everything aligns with the input check
     pattern = '.' + pattern + '.'
