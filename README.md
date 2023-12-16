@@ -1,4 +1,4 @@
-# Advent of Code 2022
+# Advent of Code 2023
 
 install deps with `python3 -m pip install -r requirements.txt`.
 
